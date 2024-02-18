@@ -14,6 +14,8 @@
 set -ex
 set -o pipefail
 
+PLATFORM_LIBS="-lpthread -ldl -lm"
+
 # See https://llvm.org/docs/AMDGPUUsage.html#processors for reference
 amdGPUs() {
     if [ -n "${AMDGPU_TARGETS}" ]; then

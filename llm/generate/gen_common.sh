@@ -12,6 +12,8 @@ init_vars() {
         ARCH=$(uname -m | sed -e "s/aarch64/arm64/g")
     esac
 
+    CXX="${CXX:-c++}"
+
     LLAMACPP_DIR=../llama.cpp
     CMAKE_DEFS=""
     CMAKE_TARGETS="--target ext_server"
@@ -86,13 +88,13 @@ build() {
     cmake -S ${LLAMACPP_DIR} -B ${BUILD_DIR} ${CMAKE_DEFS}
     cmake --build ${BUILD_DIR} ${CMAKE_TARGETS} -j8
     mkdir -p ${BUILD_DIR}/lib/
-    g++ -fPIC -g -shared -o ${BUILD_DIR}/lib/libext_server.${LIB_EXT} \
+    ${CXX} -fPIC -g -shared -o ${BUILD_DIR}/lib/libext_server.${LIB_EXT} \
         ${GCC_ARCH} \
         ${WHOLE_ARCHIVE} ${BUILD_DIR}/examples/server/libext_server.a ${NO_WHOLE_ARCHIVE} \
         ${BUILD_DIR}/common/libcommon.a \
         ${BUILD_DIR}/libllama.a \
         -Wl,-rpath,\$ORIGIN \
-        -lpthread -ldl -lm \
+        ${PLATFORM_LIBS} \
         ${EXTRA_LIBS}
 }
 

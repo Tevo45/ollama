@@ -7,6 +7,7 @@
 set -ex
 set -o pipefail
 echo "Starting darwin generate script"
+PLATFORM_LIBS="-lpthread -ldl -lm"
 source $(dirname $0)/gen_common.sh
 init_vars
 git_module_setup
