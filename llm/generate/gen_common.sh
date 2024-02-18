@@ -1,4 +1,4 @@
-# common logic accross linux and darwin
+# common logic accross linux, darwin and openbsd
 
 init_vars() {
     case "${GOARCH}" in
@@ -30,7 +30,7 @@ init_vars() {
         NO_WHOLE_ARCHIVE=""
         GCC_ARCH="-arch ${ARCH}"
         ;;
-    "Linux")
+    "Linux"|"OpenBSD")
         LIB_EXT="so"
         WHOLE_ARCHIVE="-Wl,--whole-archive"
         NO_WHOLE_ARCHIVE="-Wl,--no-whole-archive"
