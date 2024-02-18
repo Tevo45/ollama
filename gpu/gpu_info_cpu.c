@@ -40,6 +40,26 @@ void cpu_check_ram(mem_info_t *resp) {
 //   mem_info_t resp = {0, 0, NULL};
 //   return resp;
 // }
+#elif __OpenBSD__
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <sys/vmmeter.h>
+#include <string.h>
+#include <errno.h>
+void cpu_check_ram(mem_info_t *resp) {
+  int mib[2] = {CTL_VM, VM_UVMEXP};
+  struct uvmexp uvmexp;
+  size_t len = sizeof uvmexp;
+
+  if(sysctl(mib, 2, &uvmexp, &len, NULL, 0) < 0) {
+	resp->err = strdup(strerror(errno));
+  } else {
+	resp->err   = NULL;
+	resp->count = 1;
+	resp->total = uvmexp.pagesize * uvmexp.npages;
+	resp->free  = uvmexp.pagesize * uvmexp.free; /* should we count inactive pages as well? */
+  }
+}
 #else
 #error "Unsupported platform"
 #endif
